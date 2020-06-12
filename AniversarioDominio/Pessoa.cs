@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace AniversarioDominio
 {
@@ -25,12 +23,12 @@ namespace AniversarioDominio
         public override string ToString()
         {
             return /*Id*/
-                "Nome: " 
-                + Nome  
-                + " "  
-                + Sobrenome 
-                + " | Data de Aniversário: " 
-                + DataDeAniversario.ToString("dd/MM/yyyy") 
+                "Nome: "
+                + Nome
+                + " "
+                + Sobrenome
+                + " | Data de Aniversário: "
+                + DataDeAniversario.ToString("dd/MM/yyyy")
                 + ";\n";
         }
     }

@@ -1,16 +1,17 @@
-﻿using System;
-using AniversarioDominio;
+﻿using AniversarioDominio;
+using System;
+using System.Globalization;
 
 namespace AT_CSharp
 {
     class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             MenuPrincipal();
         }
 
-        static void MenuPrincipal()
+        private static void MenuPrincipal()
         {
             Console.Clear();
             Console.WriteLine("Gerenciador de Aniversários");
@@ -42,7 +43,24 @@ namespace AT_CSharp
             }
         }
 
-        static void SalvarPessoa()
+        private static void ConsultarPessoa()
+        {
+            Console.Clear();
+            if (repositorio.ConsultarPessoa().Count == 0)
+            {
+                Console.WriteLine("Nenhuma funcionário cadastrado.");
+            }
+            foreach (var pessoa in repositorio.ConsultarPessoa())
+            {
+                Console.WriteLine(pessoa.ToString());
+            }
+            Console.WriteLine();
+            Console.WriteLine("Aperte qualquer tecla para continuar.");
+            Console.ReadKey();
+            MenuPrincipal();
+        }
+
+        private static void SalvarPessoa()
         {
             Console.Clear();
             Console.WriteLine("Gerenciador de Aniversários");
@@ -61,35 +79,28 @@ namespace AT_CSharp
             Pessoa pessoa = new Pessoa(nome, sobrenome, dataDeAniversario);
             if (resposta == 1)
             {
-               RepositorioPessoa.SalvarPessoa(pessoa);
+                repositorio.SalvarPessoa(pessoa);
             }
             MenuPrincipal();
         }
 
-        static void ConsultarPessoa()
-        {
-            Console.Clear();
-            RepositorioPessoa.ConsultarPessoa();
-            Console.WriteLine();
-            Console.WriteLine("Aperte qualquer tecla para continuar.");
-            Console.ReadKey();
-            MenuPrincipal();
-        }
-
-        static void EditarPessoa()
+        private static void EditarPessoa()
         {
             Console.WriteLine("Editei.");
             Console.ReadKey();
             MenuPrincipal();
         }
 
-        static void DeletarPessoa()
+        private static void DeletarPessoa()
         {
             Console.WriteLine("Digite o nome da pessoa que você deseja deletar: ");
             string nome = Console.ReadLine();
-            RepositorioPessoa.DeletarPessoa(nome);
+            repositorio.DeletarPessoa(nome);
+            Console.WriteLine("Pessoa deletada com sucesso!");
             Console.ReadKey();
             MenuPrincipal();
         }
+
+        private static IRepositorioPessoa repositorio = new RepositorioPessoa();
     }
 }

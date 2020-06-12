@@ -1,43 +1,94 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace AniversarioDominio
 {
-    public class RepositorioPessoa
+    public class RepositorioPessoa : IRepositorioPessoa
     {
         static readonly string path = @"C:\users\user\desktop\Pessoas.txt";
 
-       // static List<Pessoa> listaPessoas = new List<Pessoa>();
-        public static void ConsultarPessoa()
+        public List<Pessoa> ConsultarPessoa()
         {
             if (!File.Exists(path))
             {
                 FileStream arquivo = File.Create(path);
                 arquivo.Close();
             }
-            string[] pessoas = File.ReadAllLines(path);
-            if (pessoas.Length == 0)
+
+            string resultado = File.ReadAllText(path);
+
+            string[] pessoas = resultado.Split(";");
+
+            List<Pessoa> pessoasList = new List<Pessoa>();
+            for (int i = 0; i < pessoas.Length - 1; i++)
             {
-                System.Console.WriteLine("Nenhuma funcionário cadastrado.");
-            }
-            else
-            {
-                foreach (string p in pessoas)
+                string[] dados = pessoas[i].Split(",");
+
+                var nome = dados[0];
+                var sobrenome = dados[1];
+                var dataDeAniversario = Convert.ToDateTime(dados[2]);
+
+                var pessoa = new Pessoa
                 {
-                    System.Console.WriteLine(p);
-                }
+                    Nome = nome,
+                    Sobrenome = sobrenome,
+                    DataDeAniversario = Convert.ToDateTime(dataDeAniversario)
+                };
+
+                pessoasList.Add(pessoa);
+            }
+            return pessoasList;
+        }
+
+        public void SalvarPessoa(Pessoa pessoa)
+        {
+            string format = $"{pessoa.Nome},{pessoa.Sobrenome},{pessoa.DataDeAniversario};";
+            File.AppendAllText(path, format);
+        }
+
+        public void DeletarPessoa(string nome)
+        {
+            List<Pessoa> pessoa = ConsultarPessoa().FindAll(x => x.Nome.Trim() == nome);
+            List<Pessoa> pessoasLista = ConsultarPessoa();
+
+            int id = 0;
+            Console.WriteLine("Selecione uma das pessoas abaixo: ");
+            foreach (var p in pessoa)
+            {
+                Console.WriteLine($" {id} - {p.Nome} {p.Sobrenome} {p.DataDeAniversario}");
+                id++;
+            }
+            int opcaoNome = int.Parse(Console.ReadLine());
+
+            Pessoa pessoaPraSerRemovida = pessoa.ElementAt(opcaoNome);
+            pessoasLista.RemoveAll(x => x.Nome == pessoaPraSerRemovida.Nome);
+
+            File.Delete(path);
+            FileStream arquivo = File.Create(path);
+            arquivo.Close();
+
+            foreach (var p in pessoasLista)
+            {
+                string format = $"{p.Nome},{p.Sobrenome},{p.DataDeAniversario};";
+                File.AppendAllText(path, format);
             }
         }
 
-        public static void SalvarPessoa(Pessoa pessoa)
+        public void EditarPessoa(string nome)
         {
-            File.AppendAllText(path, pessoa.ToString());
-           // listaPessoas.Add(pessoa);
-        }
+            List<Pessoa> pessoa = ConsultarPessoa().FindAll(x => x.Nome.Trim() == nome);
+            List<Pessoa> pessoasLista = ConsultarPessoa();
 
-        public static void DeletarPessoa(string nome)
-        {
-            
+            int id = 0;
+            Console.WriteLine("Selecione uma das pessoas abaixo: ");
+            foreach (var p in pessoa)
+            {
+                Console.WriteLine($" {id} - {p.Nome} {p.Sobrenome} {p.DataDeAniversario}");
+                id++;
+            }
+            int opcaoNome = int.Parse(Console.ReadLine());
         }
     }
 }
