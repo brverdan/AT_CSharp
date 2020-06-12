@@ -1,6 +1,7 @@
 ﻿using AniversarioDominio;
 using System;
 using System.Globalization;
+using System.Linq;
 
 namespace AT_CSharp
 {
@@ -50,7 +51,7 @@ namespace AT_CSharp
             {
                 Console.WriteLine("Nenhuma funcionário cadastrado.");
             }
-            foreach (var pessoa in repositorio.ConsultarPessoa())
+            foreach (var pessoa in repositorio.ConsultarPessoa().OrderBy(x => x.Id))
             {
                 Console.WriteLine(pessoa.ToString());
             }

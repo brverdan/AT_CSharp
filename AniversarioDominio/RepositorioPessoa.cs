@@ -74,20 +74,13 @@ namespace AniversarioDominio
             Pessoa pessoaRemovida = pessoasLista.Find(x => x.Id == opcaoId);
             pessoasLista.Remove(pessoaRemovida);
 
-            File.Delete(path);
-            FileStream arquivo = File.Create(path);
-            arquivo.Close();
-
-            foreach (var p in pessoasLista)
-            {
-                string format = $"{p.Id},{p.Nome},{p.Sobrenome},{p.DataDeAniversario};";
-                File.AppendAllText(path, format);
-            }
+            RecriarArquivo(pessoasLista);
         }
 
         public void EditarPessoa(string nome)
         {
-            List<Pessoa> pessoa = ConsultarPessoa().FindAll(x => x.Nome.Trim() == nome);
+            List<Pessoa> pessoa = ConsultarPessoa().FindAll(x => x.Nome.ToLower().Trim().Contains(nome) ||
+            x.Sobrenome.ToLower().Trim().Contains(nome));
             List<Pessoa> pessoasLista = ConsultarPessoa();
 
             Console.WriteLine("Selecione uma das pessoas abaixo: ");
@@ -107,11 +100,16 @@ namespace AniversarioDominio
             pessoasLista.RemoveAll(x => x.Id == pessoaEditada.Id);
             pessoasLista.Add(pessoaEditada);
 
+            RecriarArquivo(pessoasLista);
+        }
+
+        private void RecriarArquivo(List<Pessoa> pessoas)
+        {
             File.Delete(path);
             FileStream arquivo = File.Create(path);
             arquivo.Close();
 
-            foreach (var p in pessoasLista)
+            foreach (var p in pessoas)
             {
                 string format = $"{p.Id},{p.Nome},{p.Sobrenome},{p.DataDeAniversario};";
                 File.AppendAllText(path, format);
