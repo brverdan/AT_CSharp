@@ -18,7 +18,7 @@ namespace AT_CSharp
             Console.WriteLine("Selecione uma das opções abaixo: ");
             Console.WriteLine("1 - Pesquisar Pessoas");
             Console.WriteLine("2 - Adicionar novas pessoas");
-            Console.WriteLine("3 - Edirtar pessoas");
+            Console.WriteLine("3 - Editar pessoas");
             Console.WriteLine("4 - Deletar novas pessoas");
             Console.WriteLine("5 - Sair");
             int op = int.Parse(Console.ReadLine());
@@ -86,7 +86,10 @@ namespace AT_CSharp
 
         private static void EditarPessoa()
         {
-            Console.WriteLine("Editei.");
+            Console.WriteLine("Digite o nome da pessoa que você deseja editar: ");
+            string nome = Console.ReadLine();
+            repositorio.EditarPessoa(nome);
+            Console.WriteLine("Pessoa editada com sucesso!");
             Console.ReadKey();
             MenuPrincipal();
         }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 
 namespace AniversarioDominio
 {
@@ -26,12 +27,14 @@ namespace AniversarioDominio
             {
                 string[] dados = pessoas[i].Split(",");
 
-                var nome = dados[0];
-                var sobrenome = dados[1];
-                var dataDeAniversario = Convert.ToDateTime(dados[2]);
+                var id = dados[0];
+                var nome = dados[1];
+                var sobrenome = dados[2];
+                var dataDeAniversario = Convert.ToDateTime(dados[3]);
 
                 var pessoa = new Pessoa
                 {
+                    Id = Convert.ToInt32(id),
                     Nome = nome,
                     Sobrenome = sobrenome,
                     DataDeAniversario = Convert.ToDateTime(dataDeAniversario)
@@ -44,7 +47,15 @@ namespace AniversarioDominio
 
         public void SalvarPessoa(Pessoa pessoa)
         {
-            string format = $"{pessoa.Nome},{pessoa.Sobrenome},{pessoa.DataDeAniversario};";
+            if (ConsultarPessoa().Count == 0)
+            {
+                pessoa.Id = 1;
+            }
+            else
+            {
+                pessoa.Id = ConsultarPessoa().Last().Id + 1;
+            }
+            string format = $"{pessoa.Id},{pessoa.Nome},{pessoa.Sobrenome},{pessoa.DataDeAniversario};";
             File.AppendAllText(path, format);
         }
 
@@ -53,17 +64,15 @@ namespace AniversarioDominio
             List<Pessoa> pessoa = ConsultarPessoa().FindAll(x => x.Nome.Trim() == nome);
             List<Pessoa> pessoasLista = ConsultarPessoa();
 
-            int id = 0;
             Console.WriteLine("Selecione uma das pessoas abaixo: ");
             foreach (var p in pessoa)
             {
-                Console.WriteLine($" {id} - {p.Nome} {p.Sobrenome} {p.DataDeAniversario}");
-                id++;
+                Console.WriteLine($" {p.Id} - {p.Nome} {p.Sobrenome} {p.DataDeAniversario}");
             }
-            int opcaoNome = int.Parse(Console.ReadLine());
+            int opcaoId = int.Parse(Console.ReadLine());
 
-            Pessoa pessoaPraSerRemovida = pessoa.ElementAt(opcaoNome);
-            pessoasLista.RemoveAll(x => x.Nome == pessoaPraSerRemovida.Nome);
+            Pessoa pessoaRemovida = pessoasLista.Find(x => x.Id == opcaoId);
+            pessoasLista.Remove(pessoaRemovida);
 
             File.Delete(path);
             FileStream arquivo = File.Create(path);
@@ -71,7 +80,7 @@ namespace AniversarioDominio
 
             foreach (var p in pessoasLista)
             {
-                string format = $"{p.Nome},{p.Sobrenome},{p.DataDeAniversario};";
+                string format = $"{p.Id},{p.Nome},{p.Sobrenome},{p.DataDeAniversario};";
                 File.AppendAllText(path, format);
             }
         }
@@ -81,14 +90,32 @@ namespace AniversarioDominio
             List<Pessoa> pessoa = ConsultarPessoa().FindAll(x => x.Nome.Trim() == nome);
             List<Pessoa> pessoasLista = ConsultarPessoa();
 
-            int id = 0;
             Console.WriteLine("Selecione uma das pessoas abaixo: ");
             foreach (var p in pessoa)
             {
-                Console.WriteLine($" {id} - {p.Nome} {p.Sobrenome} {p.DataDeAniversario}");
-                id++;
+                Console.WriteLine($" {p.Id} - {p.Nome} {p.Sobrenome} {p.DataDeAniversario}");
             }
             int opcaoNome = int.Parse(Console.ReadLine());
+
+            Pessoa pessoaEditada = pessoasLista.Find(x => x.Id == opcaoNome);
+            Console.WriteLine("Digite o novo nome: ");
+            pessoaEditada.Nome = Console.ReadLine();
+            Console.WriteLine("Digite o novo sobrenome: ");
+            pessoaEditada.Sobrenome = Console.ReadLine();
+            Console.WriteLine("Digite a nova data de aniversário (dd/mm/yyyy): ");
+            pessoaEditada.DataDeAniversario = DateTime.Parse(Console.ReadLine());
+            pessoasLista.RemoveAll(x => x.Id == pessoaEditada.Id);
+            pessoasLista.Add(pessoaEditada);
+
+            File.Delete(path);
+            FileStream arquivo = File.Create(path);
+            arquivo.Close();
+
+            foreach (var p in pessoasLista)
+            {
+                string format = $"{p.Id},{p.Nome},{p.Sobrenome},{p.DataDeAniversario};";
+                File.AppendAllText(path, format);
+            }
         }
     }
 }

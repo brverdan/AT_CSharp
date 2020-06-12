@@ -4,7 +4,7 @@ namespace AniversarioDominio
 {
     public class Pessoa
     {
-        //public int Id { get; set; }
+        public int Id { get; set; }
         public string Nome { get; set; }
         public string Sobrenome { get; set; }
         public DateTime DataDeAniversario { get; set; }
@@ -22,8 +22,8 @@ namespace AniversarioDominio
 
         public override string ToString()
         {
-            return /*Id*/
-                "Nome: "
+            return Id 
+                + "- Nome: "
                 + Nome
                 + " "
                 + Sobrenome
