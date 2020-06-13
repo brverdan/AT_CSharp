@@ -1,6 +1,5 @@
 ﻿using AniversarioDominio;
 using System;
-using System.Globalization;
 using System.Linq;
 
 namespace AT_CSharp
@@ -15,6 +14,9 @@ namespace AT_CSharp
         private static void MenuPrincipal()
         {
             Console.Clear();
+            Console.Write("Aniversariantes do dia: " + repositorio.AniversariantesDoDia(repositorio.ConsultarPessoa()));
+            Console.WriteLine();
+            Console.WriteLine();
             Console.WriteLine("Gerenciador de Aniversários");
             Console.WriteLine("Selecione uma das opções abaixo: ");
             Console.WriteLine("1 - Pesquisar Pessoas");
@@ -50,15 +52,47 @@ namespace AT_CSharp
             if (repositorio.ConsultarPessoa().Count == 0)
             {
                 Console.WriteLine("Nenhuma funcionário cadastrado.");
+                Console.WriteLine();
+                Console.WriteLine("Aperte qualquer tecla para continuar.");
+                Console.ReadKey();
+                MenuPrincipal();
             }
-            foreach (var pessoa in repositorio.ConsultarPessoa().OrderBy(x => x.Id))
-            {
-                Console.WriteLine(pessoa.ToString());
-            }
+
+            Console.Clear();
+            Console.WriteLine("Escolha uma das opções abaixo: ");
             Console.WriteLine();
-            Console.WriteLine("Aperte qualquer tecla para continuar.");
-            Console.ReadKey();
-            MenuPrincipal();
+            Console.WriteLine("1 - Exibir todas as pessoas.");
+            Console.WriteLine("2 - Pesquisar a pessoa pelo nome.");
+            int op = int.Parse(Console.ReadLine());
+            Console.WriteLine();
+
+            switch(op)
+            {
+                case 1:
+                    foreach (var pessoa in repositorio.ConsultarPessoa().OrderBy(x => x.Id))
+                    {
+                        Console.WriteLine(pessoa.ToString());
+                    }
+                    Console.WriteLine("Aperte qualquer tecla para continuar.");
+                    Console.ReadKey();
+                    MenuPrincipal();
+                    break;
+
+                case 2:
+                    Console.WriteLine("Insira o nome a ser buscado: ");
+                    string nome = Console.ReadLine();
+                    Console.WriteLine(repositorio.BuscarPessoaPorNome(nome));
+                    Console.WriteLine();
+                    Console.WriteLine("Aperte qualquer tecla para continuar.");
+                    Console.ReadKey();
+                    MenuPrincipal();
+                    break;
+
+                default:
+                    MenuPrincipal();
+                    break;
+
+            }
         }
 
         private static void SalvarPessoa()
@@ -87,20 +121,21 @@ namespace AT_CSharp
 
         private static void EditarPessoa()
         {
+            Console.Clear();
             Console.WriteLine("Digite o nome da pessoa que você deseja editar: ");
             string nome = Console.ReadLine();
             repositorio.EditarPessoa(nome);
-            Console.WriteLine("Pessoa editada com sucesso!");
             Console.ReadKey();
             MenuPrincipal();
         }
 
         private static void DeletarPessoa()
         {
+            Console.Clear();
             Console.WriteLine("Digite o nome da pessoa que você deseja deletar: ");
             string nome = Console.ReadLine();
             repositorio.DeletarPessoa(nome);
-            Console.WriteLine("Pessoa deletada com sucesso!");
+  
             Console.ReadKey();
             MenuPrincipal();
         }

@@ -31,5 +31,21 @@ namespace AniversarioDominio
                 + DataDeAniversario.ToString("dd/MM/yyyy")
                 + ";\n";
         }
+
+        public string DiferencaAniversario()
+        {
+            DateTime dataDeHoje = DateTime.Today;
+            DateTime proximaData = new DateTime(dataDeHoje.Year, DataDeAniversario.Month, DataDeAniversario.Day);
+
+            if (proximaData < dataDeHoje)
+            {
+                proximaData = proximaData.AddYears(1);
+            }
+
+            int diferencaDeDias = (proximaData - dataDeHoje).Days;
+
+            return "Quantidade de dias para o próximo aniversário: " + diferencaDeDias;
+        }
+
     }
 }

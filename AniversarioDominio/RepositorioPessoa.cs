@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 
 namespace AniversarioDominio
 {
@@ -61,11 +60,17 @@ namespace AniversarioDominio
 
         public void DeletarPessoa(string nome)
         {
-            List<Pessoa> pessoa = ConsultarPessoa().FindAll(x => x.Nome.Trim() == nome);
+            List<Pessoa> pessoasConsultadas = ConsultarPessoa().FindAll(x => x.Nome.ToLower().Trim().Contains(nome.ToLower()) ||
+            x.Sobrenome.ToLower().Trim().Contains(nome.ToLower()));
             List<Pessoa> pessoasLista = ConsultarPessoa();
 
+            if (pessoasConsultadas.Count == 0)
+            {
+                Console.WriteLine("Nenhum resultado encontrado.");
+                return;
+            }
             Console.WriteLine("Selecione uma das pessoas abaixo: ");
-            foreach (var p in pessoa)
+            foreach (var p in pessoasConsultadas)
             {
                 Console.WriteLine($" {p.Id} - {p.Nome} {p.Sobrenome} {p.DataDeAniversario}");
             }
@@ -73,18 +78,24 @@ namespace AniversarioDominio
 
             Pessoa pessoaRemovida = pessoasLista.Find(x => x.Id == opcaoId);
             pessoasLista.Remove(pessoaRemovida);
+            Console.WriteLine("Pessoa deletada com sucesso!");
 
             RecriarArquivo(pessoasLista);
         }
 
         public void EditarPessoa(string nome)
         {
-            List<Pessoa> pessoa = ConsultarPessoa().FindAll(x => x.Nome.ToLower().Trim().Contains(nome) ||
-            x.Sobrenome.ToLower().Trim().Contains(nome));
+            List<Pessoa> pessoasConsultadas = ConsultarPessoa().FindAll(x => x.Nome.ToLower().Trim().Contains(nome.ToLower()) ||
+            x.Sobrenome.ToLower().Trim().Contains(nome.ToLower()));
             List<Pessoa> pessoasLista = ConsultarPessoa();
 
+            if (pessoasConsultadas.Count == 0)
+            {
+                Console.WriteLine("Nenhum resultado encontrado.");
+                return;
+            }
             Console.WriteLine("Selecione uma das pessoas abaixo: ");
-            foreach (var p in pessoa)
+            foreach (var p in pessoasConsultadas)
             {
                 Console.WriteLine($" {p.Id} - {p.Nome} {p.Sobrenome} {p.DataDeAniversario}");
             }
@@ -100,6 +111,7 @@ namespace AniversarioDominio
             pessoasLista.RemoveAll(x => x.Id == pessoaEditada.Id);
             pessoasLista.Add(pessoaEditada);
 
+            Console.WriteLine("Pessoa editada com sucesso!");
             RecriarArquivo(pessoasLista);
         }
 
@@ -114,6 +126,39 @@ namespace AniversarioDominio
                 string format = $"{p.Id},{p.Nome},{p.Sobrenome},{p.DataDeAniversario};";
                 File.AppendAllText(path, format);
             }
+        }
+
+        public string BuscarPessoaPorNome(string nome)
+        {
+            List<Pessoa> pessoasConsultadas = ConsultarPessoa().FindAll(x => x.Nome.ToLower().Trim().Contains(nome.ToLower()) ||
+            x.Sobrenome.ToLower().Trim().Contains(nome.ToLower()));
+
+            if (pessoasConsultadas.Count == 0)
+            {
+                return "Nenhum resultado encontrado.";
+            }
+            Console.WriteLine("Selecione uma das pessoas abaixo: ");
+            foreach (var p in pessoasConsultadas)
+            {
+                Console.WriteLine($" {p.Id} - {p.Nome} {p.Sobrenome} {p.DataDeAniversario}");
+            }
+            int opcaoId = int.Parse(Console.ReadLine());
+
+            Pessoa pessoaSelecionada = pessoasConsultadas.Find(x => x.Id == opcaoId);
+            return pessoaSelecionada.ToString() + pessoaSelecionada.DiferencaAniversario();
+        }
+
+        public string AniversariantesDoDia(List<Pessoa> pessoas)
+        {
+            DateTime dataDeHoje = DateTime.Today;
+            foreach (var aniversariante in pessoas)
+            {
+                if ((aniversariante.DataDeAniversario.Month == dataDeHoje.Month) && (aniversariante.DataDeAniversario.Day == dataDeHoje.Day))
+                {
+                    return aniversariante.Nome + "| ";
+                }
+            }
+            return "Nenhum aniversariante hoje.";
         }
     }
 }
