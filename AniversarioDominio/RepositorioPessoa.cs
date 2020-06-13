@@ -7,16 +7,10 @@ namespace AniversarioDominio
 {
     public class RepositorioPessoa : IRepositorioPessoa
     {
-        static readonly string path = @"C:\users\user\desktop\Pessoas.txt";
+        static readonly string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Pessoas.txt";
 
         public List<Pessoa> ConsultarPessoa()
         {
-            if (!File.Exists(path))
-            {
-                FileStream arquivo = File.Create(path);
-                arquivo.Close();
-            }
-
             string resultado = File.ReadAllText(path);
 
             string[] pessoas = resultado.Split(";");
@@ -159,6 +153,14 @@ namespace AniversarioDominio
                 }
             }
             return "Nenhum aniversariante hoje.";
+        }
+
+        public void CriacaoArquivo() {
+            if (!File.Exists(path))
+            {
+                FileStream arquivo = File.Create(path);
+                arquivo.Close();
+            }
         }
     }
 }

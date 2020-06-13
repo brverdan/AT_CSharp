@@ -12,5 +12,6 @@ namespace AniversarioDominio
         void EditarPessoa(string nome);
         string BuscarPessoaPorNome(string nome);
         string AniversariantesDoDia(List<Pessoa> pessoas);
+        void CriacaoArquivo();
     }
 }

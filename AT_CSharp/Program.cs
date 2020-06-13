@@ -14,6 +14,7 @@ namespace AT_CSharp
         private static void MenuPrincipal()
         {
             Console.Clear();
+            repositorio.CriacaoArquivo();
             Console.Write("Aniversariantes do dia: " + repositorio.AniversariantesDoDia(repositorio.ConsultarPessoa()));
             Console.WriteLine();
             Console.WriteLine();
@@ -40,8 +41,13 @@ namespace AT_CSharp
                 case 4:
                     DeletarPessoa();
                     break;
-                default:
+                case 5:
                     Console.WriteLine("Tchau!!");
+                    break;
+                default:
+                    Console.WriteLine("Opção inválida.");
+                    Console.ReadKey();
+                    MenuPrincipal();
                     break;
             }
         }
@@ -57,41 +63,43 @@ namespace AT_CSharp
                 Console.ReadKey();
                 MenuPrincipal();
             }
-
-            Console.Clear();
-            Console.WriteLine("Escolha uma das opções abaixo: ");
-            Console.WriteLine();
-            Console.WriteLine("1 - Exibir todas as pessoas.");
-            Console.WriteLine("2 - Pesquisar a pessoa pelo nome.");
-            int op = int.Parse(Console.ReadLine());
-            Console.WriteLine();
-
-            switch(op)
+            else
             {
-                case 1:
-                    foreach (var pessoa in repositorio.ConsultarPessoa().OrderBy(x => x.Id))
-                    {
-                        Console.WriteLine(pessoa.ToString());
-                    }
-                    Console.WriteLine("Aperte qualquer tecla para continuar.");
-                    Console.ReadKey();
-                    MenuPrincipal();
-                    break;
+                Console.Clear();
+                Console.WriteLine("Escolha uma das opções abaixo: ");
+                Console.WriteLine();
+                Console.WriteLine("1 - Exibir todas as pessoas.");
+                Console.WriteLine("2 - Pesquisar a pessoa pelo nome.");
+                int op = int.Parse(Console.ReadLine());
+                Console.WriteLine();
 
-                case 2:
-                    Console.WriteLine("Insira o nome a ser buscado: ");
-                    string nome = Console.ReadLine();
-                    Console.WriteLine(repositorio.BuscarPessoaPorNome(nome));
-                    Console.WriteLine();
-                    Console.WriteLine("Aperte qualquer tecla para continuar.");
-                    Console.ReadKey();
-                    MenuPrincipal();
-                    break;
+                switch (op)
+                {
+                    case 1:
+                        foreach (var pessoa in repositorio.ConsultarPessoa().OrderBy(x => x.Id))
+                        {
+                            Console.WriteLine(pessoa.ToString());
+                        }
+                        Console.WriteLine("Aperte qualquer tecla para continuar.");
+                        Console.ReadKey();
+                        MenuPrincipal();
+                        break;
 
-                default:
-                    MenuPrincipal();
-                    break;
+                    case 2:
+                        Console.WriteLine("Insira o nome a ser buscado: ");
+                        string nome = Console.ReadLine();
+                        Console.WriteLine(repositorio.BuscarPessoaPorNome(nome));
+                        Console.WriteLine();
+                        Console.WriteLine("Aperte qualquer tecla para continuar.");
+                        Console.ReadKey();
+                        MenuPrincipal();
+                        break;
 
+                    default:
+                        MenuPrincipal();
+                        break;
+
+                }
             }
         }
 
